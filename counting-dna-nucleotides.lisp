@@ -20,7 +20,7 @@
 	((char-equal #\T nucleotid) (thymine))
 	((char-equal #\G nucleotid) (guanine))
 	((char-equal #\C nucleotid) (cytosine))
-	(t (error "You are a nucleotid character?"))))
+	(t (error "Are you a nucleotide?"))))
 
 (defun adn (adn-str)
   (let ((adn-lst (coerce adn-str 'list)))
