@@ -19,12 +19,23 @@
 	((char-equal #\C nucleotid) (guanine *adn*))
 	(t (error "Are you a nucleotide?"))))
 
-(defun reverse-lst (lst)
-  (reverse lst))
-
-(defun reverse-adn (str-adn)
-  (let ((lst-adn (reverse (coerce str-adn 'list))))
+(defun complement-adn (str-adn)
+  (let ((lst-adn (coerce str-adn 'list)))
     (if (equal lst-adn nil)
 	nil
 	(cons (one-nucleotid (car lst-adn))
-	      (reverse-adn (cdr lst-adn))))))
+	      (complement-adn (cdr lst-adn))))))
+
+(defun flatten (lst)
+  (labels ((rflatten (lst1 acc)
+             (dolist (el lst1)
+               (if (listp el)
+                   (setf acc (rflatten el acc))
+                   (push el acc)))
+             acc))
+    (reverse (rflatten lst nil))))
+
+(defun reverse-complement (str-adn)
+  (coerce (flatten (reverse (complement-adn str-adn))) 'string))
+
+(reverse-complement "AAAACCCGGT")
