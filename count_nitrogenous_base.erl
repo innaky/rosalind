@@ -1,5 +1,26 @@
 -module(count_nitrogenous_base).
+-export([start/0, rpc/2, server/0]).
 -export([count_nb/5]).
+
+start() ->
+    spawn(?MODULE, server, []).
+
+rpc(Pid, Ask) ->
+    Pid ! {self(), Ask},
+    receive
+	{Pid, Response} ->
+	    Response
+    end.
+
+server() ->
+    receive
+	{From, {count_atcg, A, T, G, C, String}} ->
+	    From ! {self(), count_nb(A, T, G, C, String)},
+	    server();
+	{From, Other} ->
+	    From ! {self(), {error, Other}},
+	    server()
+    end.
 
 count_nb(_A, _T, _G, _C, []) ->
     [_A | [ _T | [ _G | [_C | []]]]];
