@@ -49,3 +49,17 @@ count_nb(A, T, G, C, [H|Cdr]) when H == $G; H == $g ->
     count_nb(A, T, G+1, C, Cdr);
 count_nb(A, T, G, C, [H|Cdr]) when H == $C; H == $c ->
     count_nb(A,T,G,C+1,Cdr).
+
+
+% 1> c(count_nitrogenous_base).
+% {ok,count_nitrogenous_base}
+% 2> count_nitrogenous_base:start().
+% <0.84.0>
+% 3> count_nitrogenous_base:rpc({count_atcg, 0,0,0,0, "atcg"}).
+% [1,1,1,1]
+% 4> count_nitrogenous_base:rpc({"atcg"}).
+% {error,{"atcg"}}
+% 5> exit(whereis(serverproc), kill).
+% true
+% 6> count_nitrogenous_base:rpc({count_atcg, 0,0,0,0, "atcga"}).
+% [2,1,1,1]
