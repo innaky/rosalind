@@ -1,35 +1,43 @@
 -module(count_nitrogenous_base).
--export([start/0, rpc/2, server/0, monitoring/2]).
+-export([start/0, rpc/1, server/0, restarter/0]).
 -export([count_nb/5]).
 
 start() ->
-    spawn(?MODULE, server, []).
+    spawn(?MODULE, restarter, []).
 
-rpc(Pid, Ask) ->
-    Pid ! {self(), Ask},
+% Thanks Fred Hébert :)
+restarter() ->
+    process_flag(trap_exit, true),
+    Pid = spawn_link(?MODULE, server, []),
+    register(serverproc, Pid),
     receive
-	{Pid, Response} ->
-	    Response
+	{'EXIT', Pid, normal} ->
+	    ok;
+	{'EXIT', Pid, shutdown} ->
+	    ok;
+	{'EXIT', Pid, _} ->
+	    restarter()
     end.
 
 server() ->
     receive
-	{From, {count_atcg, A, T, G, C, String}} ->
-	    From ! {self(), count_nb(A, T, G, C, String)},
+	{From, Ref, {count_atcg, A, T, G, C, String}} ->
+	    From ! {Ref, count_nb(A, T, G, C, String)},
 	    server();
-	{From, Other} ->
-	    From ! {self(), {error, Other}},
+	{From, Ref, Other} ->
+	    From ! {Ref, {error, Other}},
 	    server()
     end.
 
-monitoring(Pid, Fn) ->
-    spawn(fun() ->
-		  Ref = monitor(process, Pid),
-		  receive
-		      {'DOWN', Ref, process, Pid, Why} ->
-			  Fn(Why)
-		  end
-	  end).
+rpc(Ask) ->
+    Ref = make_ref(),
+    serverproc ! {self(), Ref, Ask},
+    receive
+	{Ref, Response} ->
+	    Response
+    after 2000 ->
+	    timeout
+    end.
 
 count_nb(_A, _T, _G, _C, []) ->
     [_A | [ _T | [ _G | [_C | []]]]];
