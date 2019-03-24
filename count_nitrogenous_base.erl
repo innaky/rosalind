@@ -1,5 +1,5 @@
 -module(count_nitrogenous_base).
--export([start/0, rpc/2, server/0]).
+-export([start/0, rpc/2, server/0, monitoring/2]).
 -export([count_nb/5]).
 
 start() ->
@@ -21,6 +21,15 @@ server() ->
 	    From ! {self(), {error, Other}},
 	    server()
     end.
+
+monitoring(Pid, Fn) ->
+    spawn(fun() ->
+		  Ref = monitor(process, Pid),
+		  receive
+		      {'DOWN', Ref, process, Pid, Why} ->
+			  Fn(Why)
+		  end
+	  end).
 
 count_nb(_A, _T, _G, _C, []) ->
     [_A | [ _T | [ _G | [_C | []]]]];
