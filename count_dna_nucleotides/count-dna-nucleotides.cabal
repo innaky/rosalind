@@ -2,8 +2,8 @@
 -- further documentation, see http://haskell.org/cabal/users-guide/
 
 name:                count-dna-nucleotides
-version:             0.1.0.0
-synopsis:            Counting the adn nucleotides and output the lenght
+version:             0.1.0.1
+synopsis:            Counting the adn nucleotides and output the length
 -- description:
 homepage:            github.com/innaky/rosalind
 license:             GPL-3
