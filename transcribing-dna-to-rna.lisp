@@ -1,24 +1,25 @@
-(defun timine? (character)
-  (if (equal #\T character)
-      T
+(defun thymine? (dna-chr)
+  (if (or (equal #\t dna-chr) (equal #\T dna-chr))
+      t
       nil))
 
-(defun timine-to-uracil (character)
-  (if (timine? character)
+(defun t-u (dna-chr)
+  (if (thymine? dna-chr)
       #\U
-      character))
+      (char-upcase dna-chr)))
 
-(defun adn-to-arn-lst (adn-str)
-  (let ((adn-lst (coerce adn-str 'list)))
-    (if (equal adn-lst nil)
+(defun dna-rna-lst (dna)
+  (let ((dna-chars (coerce dna 'list)))
+    (if (equal dna-chars nil)
 	nil
 	(cons
-	 (if (timine? (car adn-lst))
-	     (timine-to-uracil (car adn-lst))
-	     (timine-to-uracil (car adn-lst)))
-	 (adn-to-arn-lst (cdr adn-lst))))))
+	 (if (thymine? (car dna-chars))
+	     (t-u (car dna-chars))
+	     (t-u (car dna-chars)))
+	 (dna-rna-lst (cdr dna-chars))))))
 
-(defun adn-to-arn (adn-str)
-  (coerce (adn-to-arn-lst adn-str) 'string))
+(defun dna-to-rna (dna)
+  (coerce (dna-rna-lst dna) 'string))
 
-(adn-to-arn "GATGGAACTTGACTACGTAAATT")
+(dna-to-rna "GATGGAACTTGACTACGTAAATT")
+(dna-to-rna "gatggaacttgactacgtaaatt")
