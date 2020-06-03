@@ -53,8 +53,8 @@ for default or for any other character, minor to length string."
 
 (defun dna (dna)
   "Take a DNA string and return a list with the count of (Adenine Cytosine Guanine Thymine)."
-  (progn
-    (count-dna-bases (string-to-charlst dna))
-    (list (- (adenine) 1) (- (cytosine) 1)
-	  (- (guanine) 1) (- (thymine) 1))))
+  (count-dna-bases (string-to-charlst dna))
+  (let ((data (list (- (adenine) 1) (- (cytosine) 1) (- (guanine) 1) (- (thymine) 1))))
+    (format t "~A" data))
+  (zero))
 
